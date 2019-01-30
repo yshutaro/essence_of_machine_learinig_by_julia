@@ -19,3 +19,15 @@ gd.solveGradientDescent(algo, f, df, initial)
 
 println(algo.x_)
 println(algo.opt_)
+
+plt1 = scatter(algo.path_x_, algo.path_y_, color="black", markersize=1)
+
+xs = LinRange(-2, 2, 300)
+ys = LinRange(-2, 2, 300)
+
+h(x,y) = f([x, y]) # 配列の形に直す
+zs = h.(xs', ys)
+levels = [-3, -2.9, -2.8, -2.6, -2.4, -2.2, -2, -1, -1, 0, 1, 2, 3, 4]
+
+plt2 = contour(zs, levels=levels, color="black", linestyle=:dash)
+plot(plt1, plt2)
