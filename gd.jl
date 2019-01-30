@@ -10,29 +10,17 @@ mutable struct GradientDescent
   end
 end
 
-function solveGradientDescent(g::GradientDescent, f, df, init::Array, α=0.01, ϵ=eps())
+function solveGradientDescent(g::GradientDescent, f, df, init::Array, α=0.01, ϵ=1e-6)
   x = init
-  println("x=", x)
   path = []
-  ∇ = df(x)
-  println("∇=", ∇)
+  grad = df(x)
   append!(path, x)
-  println("sum=", sum(∇.^2))
-  x = x - α .* ∇
-  println("x(after)=", x)
   
-  #while sum(∇.^2) > ϵ^2
-  #  println("∇=", ∇)
-  #  println("sum=", sum(∇.^2))
-  #  println("x(befor)=", x)
-  #  x = x - α .* ∇
-  #  println("x(after)=", x)
-  #  ∇ = df(x)
-  #  println("df[1]=",∇[1])
-  #  println("df[2]=",∇[2])
-  #  append!(path, x)
-  #end
-
+  while (sum(grad.^2)) > ϵ^2
+    x = x - α * grad
+    grad = df(x)
+    append!(path, x)
+  end
 
   g.path_ = path
   g.x_ = x

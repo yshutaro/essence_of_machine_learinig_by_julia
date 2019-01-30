@@ -4,18 +4,18 @@ using .gd #自作Moduleは.付きで呼び出す
 function f(xx::Array)
   x = xx[1]
   y = xx[2]
-  5*x^2 - 6*x*y + 3*y^2 + 6*x - 6*y
+  5 * x^2 - 6 * x*y + 3 * y^2 + 6*x - 6*y
 end
 
 function df(xx::Array)
   x = xx[1]
   y = xx[2]
-  [10*x - 6*x + 6, -6*x + 6*y - 6]
+  [10 * x - 6 * y + 6, -6 * x + 6 * y - 6]
 end
 
-gdStruct = gd.GradientDescent()
+algo = gd.GradientDescent()
 initial = [1, 1]
-gd.solveGradientDescent(gdStruct, f, df, initial)
+gd.solveGradientDescent(algo, f, df, initial)
 
-#print(gdStruct.x_)
-#print(gdStruct.opt_)
+println(algo.x_)
+println(algo.opt_)
