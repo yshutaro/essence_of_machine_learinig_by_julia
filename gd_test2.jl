@@ -26,10 +26,7 @@ for α in alphas
   algo = gd.GradientDescent()
   gd.solveGradientDescent(algo, f, df, initial, α)
   push!(algos , algo)
-  println(algo.x_)
-  println(algo.opt_)
 end
-
 
 xs = LinRange(-2, 2, 300)
 ys = LinRange(-2, 2, 300)
@@ -38,10 +35,14 @@ h(x,y) = f([x, y]) # 配列の形に直す
 zs = h.(xs', ys)
 levels = [-3, -2.9, -2.8, -2.6, -2.4, -2.2, -2, -1, -1, 0, 1, 2, 3, 4]
 
-plt1 = scatter(algos[1].path_x_, algos[1].path_y_, color="black", markersize=1)
-plt2 = contour(zs, levels=levels, color="black", linestyle=:dash)
-plot(plt1, plt2)
-#plt3 = scatter(algos[2].path_x_, algos[2].path_y_, color="black", markersize=1)
-#plt4 = contour(zs, levels=levels, color="black", linestyle=:dash)
-#  plot(plt1, plt2, plt3, plt4)
-#plot(plt3)
+plt0 = scatter([initial[1]], [initial[2]], color="black", markersize=5)
+
+# 0.1の時用
+#plt1 = scatter!(plt0, algos[1].path_x_, algos[1].path_y_, color="black", markersize=1.5,xlim=(xmin, xmax), ylim=(ymin, ymax))
+
+# 0.2の時用
+plt1 = scatter!(plt0, algos[2].path_x_, algos[2].path_y_, color="black", markersize=1.5,xlim=(xmin, xmax), ylim=(ymin, ymax))
+
+plot(plt1)
+contour!(xs, ys, zs, levels=levels, color="black", linestyle=:dash)
+
