@@ -13,3 +13,5 @@ y = w0 .+ w1 * X[:, 1] .+ w2 * X[:, 2] .+ rand(n)
 
 model = linearreg.LinearRegression()
 linearreg.fit(model, X, y)
+println("係数:", model.w_)
+println("(1, 1)に対する予測値:", linearreg.predict(model, [1,1]))
