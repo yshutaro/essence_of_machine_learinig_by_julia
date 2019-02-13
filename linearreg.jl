@@ -3,8 +3,7 @@ module linearreg
 mutable struct LinearRegression
   w_
   function LinearRegression()
-    w_ = Nothing
-    new(w_)
+    new(Nothing)
   end
 end
 
