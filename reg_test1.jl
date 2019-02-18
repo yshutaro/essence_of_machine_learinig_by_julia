@@ -22,5 +22,5 @@ xmesh = repeat(x_range', outer=(length(y_range),1))
 ymesh = repeat(y_range,  outer=(1,length(x_range)))
 zmesh = reshape(model.w_[1] .+ model.w_[2] .* vec(xmesh) .+ model.w_[3] .* vec(ymesh), size(xmesh))
 
-plot(x_range, y_range, zmesh, color=:red, st=:wireframe)
+plot(x_range, y_range, zmesh, color="red", st=:wireframe)
 scatter!(X[:,1], X[:,2], y, color="black")
