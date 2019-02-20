@@ -18,7 +18,8 @@ plt_r = []
 for i in 0:4
     xx = x[1:2 + i * 2]
     yy = x[1:2 + i * 2]
-    plt_s1= scatter(xx, yy, color="black", xlim=(xmin, xmax), ylim=(ymin, ymax))
+    plt_s1= scatter(xx, yy, color="black", markersize = 2,
+                    xlim=(xmin, xmax), ylim=(ymin, ymax))
 
     model = linearreg.LinearRegression()
     linearreg.fit(model, xx, yy)
@@ -34,7 +35,8 @@ for i in 0:4
     ys = [model.w_[1] + model.w_[2] * xmin,
     model.w_[1] + model.w_[2] * xmax]
 
-    plt_s2 = scatter(xx, yy, color="black", xlim=(xmin, xmax), ylim=(ymin, ymax))
+    plt_s2 = scatter(xx, yy, color="black", markersize = 2,
+                     xlim=(xmin, xmax), ylim=(ymin, ymax))
     push!(plt_r, plot!(plt_s2, xs, ys, color="black"))
 
 end
