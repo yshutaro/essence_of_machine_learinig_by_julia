@@ -16,10 +16,10 @@ plt_l = []
 plt_r = []
 
 for i in 0:4
-    xx = x[1:2 + i * 2]
-    yy = x[1:2 + i * 2]
+    xx = x[1:(2 + i * 2)]
+    yy = y[1:(2 + i * 2)]
     plt_s1= scatter(xx, yy, color="black", markersize = 2,
-                    xlim=(xmin, xmax), ylim=(ymin, ymax))
+                    xlim=(xmin, xmax), ylim=(ymin, ymax), label="")
 
     model = linearreg.LinearRegression()
     linearreg.fit(model, xx, yy)
@@ -27,7 +27,7 @@ for i in 0:4
     ys = [model.w_[1] + model.w_[2] * xmin,
     model.w_[1] + model.w_[2] * xmax]
 
-    push!(plt_l,plot!(plt_s1, xs, ys, color="black"))
+    push!(plt_l,plot!(plt_s1, xs, ys, color="black", label=""))
 
     model = ridge.RidgeRegression(10.)
     ridge.fit(model, xx,yy)
@@ -36,8 +36,8 @@ for i in 0:4
     model.w_[1] + model.w_[2] * xmax]
 
     plt_s2 = scatter(xx, yy, color="black", markersize = 2,
-                     xlim=(xmin, xmax), ylim=(ymin, ymax))
-    push!(plt_r, plot!(plt_s2, xs, ys, color="black"))
+                     xlim=(xmin, xmax), ylim=(ymin, ymax), label="")
+    push!(plt_r, plot!(plt_s2, xs, ys, color="black", label=""))
 
 end
 
