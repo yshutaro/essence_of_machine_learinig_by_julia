@@ -1,4 +1,5 @@
 using .polyreg
+using .linearreg
 using Random
 using Plots
 
@@ -18,3 +19,11 @@ xx = LinRange(minimum(x), maximum(x), 300)
 yy = [polyreg.predict(model, u) for u in xx]
 
 plt_p_2 = plot!(plt_p_1, xx, yy, color="black", label="")
+
+# 線形回帰
+model = linearreg.LinearRegression()
+linearreg.fit(model, x, y)
+x1 = minimum(x) - 1
+x2 = maximum(x) + 1
+
+plot!(plt_p_2, [x1, x2], [f(x1), f(x2)], color="black", linestyle=:dash, label="")
