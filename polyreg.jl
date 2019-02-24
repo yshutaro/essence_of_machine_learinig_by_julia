@@ -1,6 +1,7 @@
 include("linearreg.jl")
-using .linearreg
+
 module polyreg
+using ..linearreg
 
 mutable struct PolynomialRegression
   degree::Int
@@ -16,7 +17,7 @@ function fit(s::PolynomialRegression, x, y)
   for i in 1:s.degree
     push!(x_pow, xx.^i)
   end
-  hcat(x_pow...)
+  mat = hcat(x_pow...)
   linreg = linearreg.LinearRegression()
   linearreg.fit(linreg, mat, y)
   s.w_ = linreg.w_
