@@ -26,7 +26,7 @@ end
 function predict(s::PolynomialRegression, x)
   r = 0
   for i in 1:(s.degree + 1)
-    r += x^i * s.w_[i]
+    r = r .+ x.^i * s.w_[i]
   end
   return r
 end
