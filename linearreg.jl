@@ -15,9 +15,9 @@ function fit(s::LinearRegression, X, t)
 end
 
 function predict(s::LinearRegression, X)
-  #if ndims(X) == 1
-  #  X = reshape(X, 1, :)
-  #end
+  if ndims(X) == 1
+    X = reshape(X, 1, :)
+  end
   Xtil = hcat(ones(size(X)[1]), X)
   return Xtil * s.w_
 end
