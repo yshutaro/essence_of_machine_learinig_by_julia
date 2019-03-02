@@ -1,3 +1,4 @@
+include("polyreg.jl")
 using .polyreg
 using .linearreg
 using Random
