@@ -23,12 +23,12 @@ for i in 0:n
     polyreg.fit(poly, x, y)
     lin = linearreg.LinearRegression()
     linearreg.fit(lin, x, y)
-    y_poly = polyreg.predict(poly, reshape(xx, :, 1))
+    y_poly = polyreg.predict(poly, xx)
     global y_poly_sum = y_poly_sum .+ y_poly
     y_lin = linearreg.predict(lin, reshape(xx, :, 1))
     global y_lin_sum = y_lin_sum + y_lin
 end
 
 plot(xx, f(xx), label="truth", color="black", linestyle=:solid)
-#plot!(xx, y_poly_sum / n, label="polynimial reg.", color="black", linestyle=:dot)
+plot!(xx, y_poly_sum / n, label="polynimial reg.", color="black", linestyle=:dot)
 plot!(xx, y_lin_sum / n, label="linear reg.", color="black", linestyle=:dash)
