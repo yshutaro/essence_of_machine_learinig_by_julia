@@ -19,8 +19,7 @@ y_poly_sum_sq = zeros(length(xx))
 y_lin_sum = zeros(length(xx))
 y_lin_sum_sq = zeros(length(xx))
 y_true = f(xx)
-n = 100
-#n = 100000
+n = 100000
 for i in 0:n
     x, y = sample(5)
     poly = polyreg.PolynomialRegression(4)
