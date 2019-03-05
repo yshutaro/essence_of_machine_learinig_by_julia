@@ -34,10 +34,10 @@ for i in 0:n
     global y_lin_sum_sq = y_lin_sum_sq + (y_lin .- y_true).^2
 end
 
-ax1_1 = plot(xx, xx, fillrange=(0, (y_lin_sum / n .- y_true).^2), fillcolor=:black, label="bias", title="Linear reg.")
-ax1 = plot!(xx, xx, fillrange=((y_lin_sum / n .- y_true).^2, y_lin_sum_sq / n),fillcolor=:blue, label="variance")
+ax1_1 = plot(xx, (y_lin_sum / n .- y_true).^2, fillrange=(0, (y_lin_sum / n .- y_true).^2), fillcolor=:black, label="bias", title="Linear reg.")
+ax1 = plot!(xx, y_lin_sum_sq / n, fillrange=((y_lin_sum / n .- y_true).^2, y_lin_sum_sq / n),fillcolor=:blue, label="variance")
 
-ax1_2 = plot(xx, xx, fillrange=(0, (y_poly_sum / n .- y_true).^2), fillcolor=:black, label="bias", title="Polynomial reg.")
-ax2 = plot!(xx, xx, fillrange=((y_poly_sum / n .- y_true).^2, y_poly_sum_sq / n), fillcolor=:blue, label="variance")
+ax1_2 = plot(xx, (y_poly_sum / n .- y_true).^2, fillrange=(0, (y_poly_sum / n .- y_true).^2), fillcolor=:black, label="bias", title="Polynomial reg.")
+ax2 = plot!(xx, y_poly_sum_sq / n, fillrange=((y_poly_sum / n .- y_true).^2, y_poly_sum_sq / n), fillcolor=:blue, label="variance")
 
 plot(ax1, ax2, layout=(1,2))
