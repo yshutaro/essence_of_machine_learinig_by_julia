@@ -2,6 +2,7 @@ include("lasso.jl")
 using .lasso
 using CSV
 using Random
+using Statistics
 using Printf
 
 dataframe = CSV.read("winequality-red.csv", header=true, delim=';')
