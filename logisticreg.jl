@@ -2,12 +2,13 @@ module logisticreg
 
 using LinearAlgebra
 using Random
+using Statistics
 
 THRESHMIN = 1e-10
 
 sigmoid(x) = 1 / (1 + ℯ^(-1))
 
-struct LogisticRegression
+mutable struct LogisticRegression
     tol
     max_iter
     w_
