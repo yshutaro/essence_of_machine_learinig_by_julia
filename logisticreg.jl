@@ -38,6 +38,7 @@ end
 function predict(s::LogisticRegression, X)
     Xtil = hcat(ones(size(X)[1]), X)
     yhat = sigmoid(dot(Xtil, s.w_))
+    return [ifelse(x .> .5, 1, 0) for x in yhat]
 end
 
 end
