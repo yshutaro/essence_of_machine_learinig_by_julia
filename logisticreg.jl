@@ -6,7 +6,7 @@ using Statistics
 
 THRESHMIN = 1e-10
 
-sigmoid(x) = 1 / (1 + ℯ^(-1))
+sigmoid(x) = 1 / (1 + ℯ^(-x))
 
 mutable struct LogisticRegression
     tol
@@ -19,7 +19,9 @@ end
 
 function fit(s::LogisticRegression, X, y)
     s.w_ = randn(size(X)[1] + 1)
+    println("size(s.w_):", size(s.w_))
     Xtil = hcat(ones(size(X)[1]), X)
+    println("size(Xtil):", size(Xtil))
     diff = Inf
     w_prev = s.w_
     iter = 0
