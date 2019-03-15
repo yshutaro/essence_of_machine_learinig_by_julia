@@ -30,30 +30,32 @@ function fit(s::LogisticRegression, X, y)
     while diff > s.tol && iter < s.max_iter
         yhat = sigmoid(Xtil * s.w_)
         println("size(yhat):", size(yhat))
-        #r = clamp.(dot(yhat, (1 .- yhat)), THRESHMIN, Inf)
         r = clamp.(yhat .* (1 .- yhat), THRESHMIN, Inf)
-        println("r:", r)
         println("size(r):", size(r))
         println("size(Xtil'):", size(Xtil'))
-        XR = Xtil' * r
+        XR = Xtil' .* r'
         println("size(XR):", size(XR))
-        XRX = Xtil' * (r * Xtil)
+        XRX = dot(Xtil' .* r', Xtil)
+        println("size(XRX):", size(XRX))
         w_prev = s.w_
-        #println("Xtil * s.w_:", Xtil * s.w_)
-        println("1 / r :", 1 / r)
-        #println("yhat -y :", yhat -y)
         println("size(Xtil * s.w_):", size(Xtil * s.w_))
         println("size(yhat -y) :", size(yhat -y))
-        b = XR * ((Xtil * s.w_) - (1 / r) * (yhat - y))
-        s.w_ = XRX / b
-        diff = mean(abs(w_prev - s.w_))
+        println("size(1 ./ r) :", size(1 ./ r))
+        println("size(s.w_) :", size(s.w_))
+        println("size(Xtil * s.w_) :", size(Xtil * s.w_))
+        println("size dot((1 ./ r) , (yhat - y)):",size( dot((1 ./ r), (yhat - y) )))
+        println("size( (Xtil * s.w_) - (1 ./ r) .* (yhat - y) ):",size( (Xtil * s.w_) .- (1 ./ r) .* (yhat - y) ))
+        b = XR * (Xtil * s.w_) .- dot((1 ./ r) , (yhat - y)) 
+        println("size(b):", size(b))
+        s.w_ = XRX \ b
+        diff = mean(abs.(w_prev - s.w_))
         iter = iter + 1
     end
 end
 
 function predict(s::LogisticRegression, X)
     Xtil = hcat(ones(size(X)[1]), X)
-    yhat = sigmoid(dot(Xtil, s.w_))
+    yhat = sigmoid(Xtil * s.w_)
     return [ifelse(x .> .5, 1, 0) for x in yhat]
 end
 
