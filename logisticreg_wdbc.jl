@@ -19,10 +19,5 @@ model = logisticreg.LogisticRegression(0.01)
 logisticreg.fit(model, X_train, y_train)
 
 y_predict = logisticreg.predict(model, X_test)
-n_hits = 0
-for i in 1:length(y_test)
-    if y_test[i] == y_predict[i]
-        global n_hits = n_hits + 1
-    end
-end
+n_hits = sum(y_test .== y_predict)
 println("Accuracy: $n_hits/$n_test = $(n_hits / n_test)")
