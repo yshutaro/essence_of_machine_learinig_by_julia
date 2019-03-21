@@ -1,4 +1,5 @@
 module svm_hard
+#using LinearAlgebra
 
 mutable struct SVC
     a
@@ -10,14 +11,21 @@ mutable struct SVC
 end
 
 function fit(s::SVC, X, y, selections=Nothing)
+    println("size(X):", size(X))
+    println("size(y):", size(y))
     a = zeros(size(X)[1])
     ay = 0
     ayx = zeros(size(X)[2])
-    yx = reshape(y, 1, :) .* X
-    indices = collect(size(X)[1])
+    yx = y .* X
+    indices = collect(1:size(X)[1])
     while true
-        ydf = y .* (yx * ayx')
+        println("size(yx):", size(yx))
+        println("size(ayx):", size(ayx))
+        ydf = y .* (1 .- (yx * ayx))
+        println("size(ydf):", size(ydf))
+        println("size(indices):", size(indices))
         iydf = hcat(indices, ydf)
+        println("size(iydf):", size(iydf))
         i = minimum(iydf[(y < 0 | a > 0)])
         j = maximum(iydf[(y < 0 | a > 0)])
         if ydf[i] >= ydf[j]
