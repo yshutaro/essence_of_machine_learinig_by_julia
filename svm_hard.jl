@@ -26,8 +26,11 @@ function fit(s::SVC, X, y, selections=Nothing)
         println("size(indices):", size(indices))
         iydf = hcat(indices, ydf)
         println("size(iydf):", size(iydf))
-        i = minimum(iydf[(y < 0 | a > 0)])
-        j = maximum(iydf[(y < 0 | a > 0)])
+        println((y .< 0) .| (a .> 0))
+        println(size((y .< 0) .| (a .> 0)))
+        println("iydf minimum", iydf[(y .< 0) .| (a .> 0)])
+        i = minimum(iydf[(y .< 0) .| (a .> 0)])
+        j = maximum(iydf[(y .< 0) .| (a .> 0)])
         if ydf[i] >= ydf[j]
             break
         end
