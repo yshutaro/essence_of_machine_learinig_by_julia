@@ -29,12 +29,11 @@ function fit(s::SVC, X, y, selections=Nothing)
         #println(size((y .< 0) .| (a .> 0)))
         println(iydf)
         println((y .< 0) .| (a .> 0))
-        println(iydf[:, 2])
-        println(iydf[:, 2][(y .< 0) .| (a .> 0)])
-        println(size(iydf[:, 2][(y .< 0) .| (a .> 0)]))
+        println(iydf[:, 1][(y .< 0) .| (a .> 0)])
+        println(size(iydf[:, 1][(y .< 0) .| (a .> 0)]))
         println("#####")
-        i = minimum(iydf[:, 2][(y .< 0) .| (a .> 0)])
-        j = maximum(iydf[:, 2][(y .< 0) .| (a .> 0)])
+        i = minimum(iydf[:, 1][(y .< 0) .| (a .> 0)])
+        j = maximum(iydf[:, 1][(y .< 0) .| (a .> 0)])
         if ydf[i] >= ydf[j]
             break
         end
