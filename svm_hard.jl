@@ -1,5 +1,5 @@
 module svm_hard
-#using LinearAlgebra
+using LinearAlgebra
 
 mutable struct SVC
     a_
@@ -50,7 +50,11 @@ function fit(s::SVC, X, y, selections=Nothing)
         println("ay2 :", ay2)
         ayx2 = ayx .- y[i]*a[i].*X[i, :] .- y[j]*a[j].*X[j, :]
         println("ayx2 :", ayx2)
-        ai = (1 - y[i]*y[j] .+ y[i] .* ( (X[i, :] .- X[j, :]) .* (X[j, :] .* ay2 .- ayx2) ) ) / sum((X[i] .- X[j]).^2)
+        println("X[i, :] :", X[i, :])
+        println("X[j, :] :", X[j, :])
+        println("X[i] :", X[i])
+        println("X[j] :", X[j])
+        ai = (1 - y[i]*y[j] .+ y[i] .* dot( (X[i, :] .- X[j, :]) , (X[j, :] .* ay2 .- ayx2) ) ) / sum((X[i] - X[j])^2)
         println("ai :", ai)
         ai = (ai < 0 ? 0 : ai)
         aj = (-ai * y[i] - ay2) * y[j]
@@ -77,10 +81,11 @@ function fit(s::SVC, X, y, selections=Nothing)
     println("a:", a)
     println("a[ind]:", a[ind])
     println("y[ind]:", y[ind])
-    s.w_ = sum((a[ind] .* y[ind]) .* X[ind, :])
+    println("X[ind,:]:", X[ind, :])
+    s.w_ = sum((a[ind] .* y[ind]) .* X[ind, :], dims=1)
     println("s.w_:", s.w_)
-    println("size(s.w_):", size(s.w_))
-    s.w0_ = sum(y[ind] - (X[ind, :] * s.w_)) / sum(ind)
+    s.w0_ = sum(y[ind] .- (X[ind, :] * (s.w_)')) / sum(ind)
+    println("s.w0_:", s.w0_)
 end
 
 function predict(s::SVC, X)
