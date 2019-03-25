@@ -6,7 +6,7 @@ mutable struct SVC
     w_
     w0_
     function SVC()
-        new(0, Nothing, Nothing)
+        new(Nothing, Nothing, Nothing)
     end
 end
 
@@ -17,35 +17,30 @@ function fit(s::SVC, X, y, selections=Nothing)
     ay = 0
     ayx = zeros(size(X)[2])
     yx = y .* X
-    #indices = collect(1:size(X)[1])
     count = 0
     while true
         println("##### ", count, " ######")
         #println("size(yx):", size(yx))
         #println("size(ayx):", size(ayx))
-        println("1 . -(yx * ayx):",1 .- (yx * ayx))
+        #println("1 . -(yx * ayx):",1 .- (yx * ayx))
         ydf = y .* (1 .- (yx * ayx))
         println("ydf:", ydf)
         #println("size(ydf):", size(ydf))
-        #iydf = hcat(indices, ydf)
-        #println("iydf  :",iydf)
-        #println(size(iydf[:, 1][(y .< 0) .| (a .> 0)]))
-        #println("#####")
-        #i = minimum(iydf[:, 1][(y .< 0) .| (a .> 0)])
-        #j = maximum(iydf[:, 1][(y .< 0) .| (a .> 0)])
-        #println(iydf[(y .< 0) .| (a .> 0)])
         i = findfirst(ydf .== minimum(ydf[(y .< 0) .| (a .> 0)]))
         println("i  :",i)
         j = findfirst(ydf .== maximum(ydf[(y .> 0) .| (a .> 0)]))
         println("j  :",j)
+        println("a:", a)
         println("y:", y)
+        println("ydf[i]: ", ydf[i])
+        println("ydf[j]: ", ydf[j])
+        if ydf[i] >= ydf[j]
+            break
+        end
         println("y[i]:", y[i])
         println("y[j]:", y[j])
         println("a[i]:", a[i])
         println("a[j]:", a[j])
-        if ydf[i] >= ydf[j]
-            break
-        end
         ay2 = ay - y[i]*a[i] - y[j]*a[j]
         println("ay2 :", ay2)
         ayx2 = ayx .- y[i]*a[i].*X[i, :] .- y[j]*a[j].*X[j, :]
@@ -58,6 +53,7 @@ function fit(s::SVC, X, y, selections=Nothing)
         println("ai :", ai)
         ai = (ai < 0 ? 0 : ai)
         aj = (-ai * y[i] - ay2) * y[j]
+        println("aj :", aj)
         if aj < 0
             aj = 0
             ai = (-aj * y[j] - ay2) * y[i]
@@ -65,12 +61,13 @@ function fit(s::SVC, X, y, selections=Nothing)
 
         ay = ay + y[i] * (ai - a[i]) + y[j] * (aj -a[j])
         ayx = ayx .+ y[i] * (ai - a[i]) .* X[i, :] + y[j] * (aj -a[j]) .* X[j, :]
+        println("a[i]: ", a[i])
         if ai == a[i]
             break
         end
         a[i] = ai
         a[j] = aj
-        count += 0
+        count += 1
     end
     s.a_ = a
     ind = a .!= 0.
