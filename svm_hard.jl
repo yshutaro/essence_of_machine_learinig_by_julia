@@ -86,7 +86,7 @@ function fit(s::SVC, X, y, selections=Nothing)
 end
 
 function predict(s::SVC, X)
-    sign(s.w0_ + X * s.w_)
+    sign.(s.w0_ .+ X * (s.w_)')
 end
 
 end
