@@ -14,9 +14,12 @@ function fit(s::SVC, X, y, selections=Nothing)
     println("size(X):", size(X))
     println("size(y):", size(y))
     a = zeros(size(X)[1])
+    println("a: ", a)
     ay = 0
     ayx = zeros(size(X)[2])
+    println("ayx: ", ayx)
     yx = y .* X
+    println("yx: ", yx)
     count = 0
     while true
         println("##### ", count, " ######")
@@ -49,7 +52,11 @@ function fit(s::SVC, X, y, selections=Nothing)
         println("X[j, :] :", X[j, :])
         println("X[i] :", X[i])
         println("X[j] :", X[j])
-        ai = (1 - y[i]*y[j] .+ y[i] .* dot( (X[i, :] .- X[j, :]) , (X[j, :] .* ay2 .- ayx2) ) ) / sum((X[i] - X[j])^2)
+        ai = (1 - y[i]*y[j] .+ y[i] .* dot( (X[i, :] .- X[j, :]) , (X[j, :] .* ay2 .- ayx2) ) ) / sum((X[i, :] .- X[j, :]).^2)
+        println("ai X[i] - X[j] :", X[i,:] .- X[j,:])
+        println("ai (X[i] - X[j])^2 :", (X[i,:] .- X[j,:]).^2)
+        println("ai sum((X[i] - X[j])^2) :", sum((X[i,:] - X[j,:]).^2))
+        println("ai dot( (X[i, :] .- X[j, :]) , (X[j, :] .* ay2 .- ayx2)) :", dot( (X[i, :] .- X[j, :]) , (X[j, :] .* ay2 .- ayx2)))
         println("ai :", ai)
         ai = (ai < 0 ? 0 : ai)
         aj = (-ai * y[i] - ay2) * y[j]
@@ -72,7 +79,6 @@ function fit(s::SVC, X, y, selections=Nothing)
     s.a_ = a
     ind = a .!= 0.
     println("ind:", ind)
-    #s.w_ = sum(reshape(a[ind] .* y[ind], 1, :) .* X[ind, :])
     println("size(X[ind, :]):", size(X[ind, :]))
     println("X[ind, :]:", X[ind, :])
     println("a:", a)
