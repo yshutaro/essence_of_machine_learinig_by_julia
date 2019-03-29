@@ -10,13 +10,9 @@ mutable struct RBFKernel
     end
 end
 
-function value(s::RBFKernel, i, j)
-    sum(exp(-(s.X[i, :] .- s.X[j, :]).^2)) / (2*s.σ2)
-end
+value(rbfK::RBFKernel, i, j)  = sum(exp(-(rbfK.X[i, :] .- rbfK.X[j, :]).^2)) / (2*rbfK.σ2)
 
-function eval(s::RBFKernel, Z, s)
-    exp(-(sum((s.X[s, 1, :] .- Z[1, : , :]).^2,dims=2) / 2(s.σ2)))
-end
+eval(rbfK::RBFKernel, Z, s) =  exp(-(sum((rbfK.X[s, 1, :] .- Z[1, : , :]).^2,dims=2) / 2(s.σ2)))
 
 mutable struct SVC
    a_
@@ -27,7 +23,7 @@ mutable struct SVC
    σ
    max_iter
    function SVC()
-       new(Nothing, Nothing, Nothing, Nothing, C=1., σ=1, max_iter=10000)
+       new(Nothing, Nothing, Nothing, Nothing, 1., 1, 10000)
    end
 end
 
@@ -79,9 +75,9 @@ function fit(s::SVC, X, y, selections=None)
         a[i] = ai
         a[j] = aj
     end
-    self.a_ = a
-    self.y_ = y
-    self.kernel_ = kernel
+    s.a_ = a
+    s.y_ = y
+    s.kernel_ = kernel
     s = a != 0.
     s.w0_ = sum(y[s] - dot(a[s]*y[s], eval(kernel, X[s], s))) / sum(s)
 end
