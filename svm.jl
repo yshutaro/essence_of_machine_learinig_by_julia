@@ -10,15 +10,22 @@ mutable struct RBFKernel
     end
 end
 
-value(obj::RBFKernel, i, j)  = sum(exp(-(obj.X[i, :] .- obj.X[j, :]).^2)) / (2*obj.σ2)
+value(obj::RBFKernel, i, j)  = exp((sum(-(obj.X[i, :] .- obj.X[j, :]).^2)) / (2*obj.σ2))
 
 function eval(obj::RBFKernel, Z, s)
-    #println("eval X:" , obj.X)
-    println("eval X size:" , size(obj.X))
-    println("eval Z size:" , size(Z))
-    println("eval s size:" , size(s))
-    println("obj.X[s, 1, :] ", obj.X[s, :] )
-    exp(-(sum((obj.X[s, 1, :] .- Z[1, : , :]).^2,dims=2) / 2(obj.σ2)))
+   # println("obj.X[hcat(s, s)] ", obj.X[hcat(s, s)] )
+    #exp(-(sum((obj.X[s, 1, :] .- Z[1, : , :]).^2,dims=2) / 2(obj.σ2)))
+    XX = obj.X[hcat(s, s)]
+    ZZ = Z[hcat(s, s)]
+    X_Z = [sum((obj.XX[i, :] .- ZZ[j, :]).^2) for i in 1:size(XX)[1], j in 1:size(ZZ)[1]]
+    println("size(X_Z) :",size(X_Z))
+    col, row = size(X_Z)
+    if (col, row) == (0, 0)
+        return []
+    end
+    println("(X_Z) :",(X_Z))
+    println("(2*obj.σ2)",(2*obj.σ2))
+    exp.(-X_Z ./ (2*obj.σ2))
 end
 
 mutable struct SVC
@@ -45,8 +52,18 @@ function fit(obj::SVC, X, y)
         println("size(y) :",size(y))
         println("size(a[s]) :",size(a[s]))
         println("size(y[s]) :",size(y[s]))
-        println("size svm.eval(kernel, X, s)",size(svm.eval(kernel, X, s)))
-        ydf = y * (1 - y * dot(a[s].*y[s], svm.eval(kernel, X, s)))
+        #println("size svm.eval(kernel, X, s)",size(svm.eval(kernel, X, s)))
+        println("a[s].*y[s] :", a[s].*y[s])
+        println("a[s].*y[s] :", a[s].*y[s])
+        println("svm.eval(kernel, X, s), ", svm.eval(kernel, X, s))
+        println("dot(a[s].*y[s], svm.eval(kernel, X, s)) : ", dot.(a[s].*y[s], svm.eval(kernel, X, s)))
+        if isempty(a[s].*y[s]) || svm.eval(kernel, X, s)
+            ydf = y
+        else
+            #ydf = y .* (1 .- y .* dot.(a[s].*y[s], svm.eval(kernel, X, s)))
+            ydf = y .* (1 .- y .* ( (a[s].*y[s]) * svm.eval(kernel, X, s)) )
+        end
+        println("ydf size : ", size(ydf))
         i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
         println("i :", i)
         j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0))]))
@@ -58,15 +75,23 @@ function fit(obj::SVC, X, y)
         ay2 = ay - y[i]*a[i] - y[j]*a[j]
         println("ay2 :", ay2)
         kii = svm.value(kernel, i, i)
+        println("kii :", kii)
         kij = svm.value(kernel, i, j)
+        println("kij :", kij)
         kjj = svm.value(kernel, j, j)
-        s = a != 0.
+        println("kjj :", kjj)
+        s = a .!= 0.
+        println("s :", s)
+        println("s size:", size(s))
         s[i] = false
         s[j] = false
         # TODO
         kxi = vec(svm.eval(kernel, X[i, :], s))
+        println("kxi :", kxi)
         kxj = vec(svm.eval(kernel, X[j, :], s))
+        println("kxj :", kxj)
         ai = (1 - y[i]*y[j] + y[i]*( (kij - kjj)*ay2 -sum(a[s]*y[s]*(kxi - kxj)) ) ) / (kii + kjj - 2*kij)
+        println("ai :", ai)
         if ai < 0
             ai = 0
         elseif ai > obj.C
@@ -91,7 +116,7 @@ function fit(obj::SVC, X, y)
     obj.a_ = a
     obj.y_ = y
     obj.kernel_ = kernel
-    s = a != 0.
+    s = a .!= 0.
     obj.w0_ = sum(y[s] - dot(a[s]*y[s], eval(kernel, X[s], s))) / sum(s)
 end
 
