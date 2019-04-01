@@ -16,8 +16,7 @@ function eval(obj::RBFKernel, Z, s)
    # println("obj.X[hcat(s, s)] ", obj.X[hcat(s, s)] )
     #exp(-(sum((obj.X[s, 1, :] .- Z[1, : , :]).^2,dims=2) / 2(obj.σ2)))
     XX = obj.X[hcat(s, s)]
-    ZZ = Z[hcat(s, s)]
-    X_Z = [sum((obj.XX[i, :] .- ZZ[j, :]).^2) for i in 1:size(XX)[1], j in 1:size(ZZ)[1]]
+    X_Z = [sum((XX[i, :] .- Z[j, :]).^2) for i in 1:size(XX)[1], j in 1:size(Z)[1]]
     println("size(X_Z) :",size(X_Z))
     col, row = size(X_Z)
     if (col, row) == (0, 0)
@@ -86,11 +85,16 @@ function fit(obj::SVC, X, y)
         s[i] = false
         s[j] = false
         # TODO
+        println("X[i, :] :", X[i, :]  )
         kxi = vec(svm.eval(kernel, X[i, :], s))
         println("kxi :", kxi)
         kxj = vec(svm.eval(kernel, X[j, :], s))
         println("kxj :", kxj)
-        ai = (1 - y[i]*y[j] + y[i]*( (kij - kjj)*ay2 -sum(a[s]*y[s]*(kxi - kxj)) ) ) / (kii + kjj - 2*kij)
+        println("(kii + kjj - 2*kij): ", (kii + kjj - 2*kij))
+        println("(kij - kjj)*ay2 : ", (kij - kjj)*ay2 )
+        println("a[s].*y[s].*(kxi .- kxj) :", a[s].*y[s].*(kxi .- kxj))
+        println("sum(a[s].*y[s].*(kxi .- kxj)) :", sum( (a[s].*y[s].*(kxi .- kxj) == []) ? 0 : a[s].*y[s].*(kxi .- kxj) ) )
+        ai = (1 - y[i]*y[j] + y[i]*( (kij - kjj)*ay2 - sum( (a[s].*y[s].*(kxi .- kxj) == []) ? 0 : a[s].*y[s].*(kxi .- kxj) ) ) ) / (kii + kjj - 2*kij)
         println("ai :", ai)
         if ai < 0
             ai = 0
