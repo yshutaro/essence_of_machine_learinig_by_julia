@@ -68,7 +68,7 @@ function fit(obj::SVC, X, y)
             println("size(svm.eval(kernel, X, s)): ", size(svm.eval(kernel, X, s)))
             println("size ( (a[s].*y[s]) .* svm.eval(kernel, X, s)) :", size( (a[s].*y[s]) .* svm.eval(kernel, X, s)) )
             println("size y: ",size(y))
-            ydf = y .* (1 .- y .* ( (a[s].*y[s]) .* svm.eval(kernel, X, s)) )
+            ydf = y .* (1 .- y .* ( (a[s].*y[s]) .* svm.eval(kernel, X, s))' )
         end
         println("ydf size : ", size(ydf))
         i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
