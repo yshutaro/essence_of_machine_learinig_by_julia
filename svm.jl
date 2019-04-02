@@ -71,6 +71,8 @@ function fit(obj::SVC, X, y)
             ydf = y .* (1 .- y .* ( (a[s].*y[s]) .* svm.eval(kernel, X, s))' )
         end
         println("ydf size : ", size(ydf))
+        println("size ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", size( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
+        println(":", (ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
         i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
         println("i :", i)
         j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0))]))
