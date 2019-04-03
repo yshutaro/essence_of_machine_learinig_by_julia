@@ -61,6 +61,20 @@ function fit(obj::SVC, X, y)
         if isempty(a[s].*y[s]) || isempty(svm.eval(kernel, X, s))
             println("isempty")
             ydf = y
+            println("ydf size : ", size(ydf))
+            println("ydf : ", (ydf))
+            #println("size ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", size( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
+            #println("((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", ( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
+            a_y_tf = (((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))
+            #println(":", (ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            #println("min :", minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            #i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            println("ydf[a_y_tf]: ", ydf[a_y_tf])
+            i = findfirst(ydf .== minimum(ydf[a_y_tf]))
+            println("i :", i)
+            #j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0))]))
+            j = findfirst(ydf .== maximum(ydf[a_y_tf]))
+            println("j :", j)
         else
             #ydf = y .* (1 .- y .* dot.(a[s].*y[s], svm.eval(kernel, X, s)))
             println("no empty")
@@ -68,18 +82,23 @@ function fit(obj::SVC, X, y)
             println("size(svm.eval(kernel, X, s)): ", size(svm.eval(kernel, X, s)))
             println("size ( (a[s].*y[s]) .* svm.eval(kernel, X, s)) :", size( (a[s].*y[s]) .* svm.eval(kernel, X, s)) )
             println("size y: ",size(y))
+            println("ydf : ", (ydf))
             ydf = y .* (1 .- y .* ( (a[s].*y[s]) .* svm.eval(kernel, X, s))' )
+            a_y_tf = (((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))
+            #println(":", (ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            #println("min :", minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            #i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
+            i = findfirst(ydf .== minimum(ydf[a_y_tf, a_y_tf]))
+            println("i :", i)
+            j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0))]))
+            println("j :", j)
         end
-        println("ydf size : ", size(ydf))
-        println("size ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", size( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
-        println(":", (ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
-        i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
-        println("i :", i)
-        j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0))]))
-        println("j :", j)
+        println("y[i]: ", y[i])
+        println("y[j]: ", y[j])
         if ydf[i] >= ydf[j]
             break
         end
+        println("a[i]: ", a[i])
 
         ay2 = ay - y[i]*a[i] - y[j]*a[j]
         println("ay2 :", ay2)
@@ -132,12 +151,25 @@ function fit(obj::SVC, X, y)
     obj.y_ = y
     obj.kernel_ = kernel
     s = a .!= 0.
-    obj.w0_ = sum(y[s] - dot(a[s]*y[s], eval(kernel, X[s], s))) / sum(s)
+    println("X size :", size(X))
+    println("s size :", size(s))
+    println("a[s] size :", size(a[s]))
+    println("y[s] size :", size(y[s]))
+    println("eval(kernel, X[hcat(s, s)], s) size :", size(eval(kernel, X[hcat(s, s)], s)))
+    if isempty(a[s].*y[s]) || isempty(svm.eval(kernel, X, s))
+        println("is empty")
+        println("sum(s)", sum(s))
+        #obj.w0_ = sum(y[s]) / sum(s)
+    else
+        println("no empty")
+        println("sum(s)", sum(s))
+        obj.w0_ = sum(y[s] - (a[s].*y[s] .* eval(kernel, X[hcat(s, s)], s)')) / sum(s)
+    end
 end
 
 function predict(obj::SVC, X)
     s = obj.a_ != 0.
-    sign(obj.w0_ + dot(obj.a_[s]*obj.y_[s], eval(obj.kernel_, X, s)))
+    sign(obj.w0_ + ((obj.a_[s].*obj.y_[s]) .* svm.eval(obj.kernel_, X, s)'))
 end
 
 end
