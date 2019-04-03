@@ -58,6 +58,7 @@ function fit(obj::SVC, X, y)
         println("a[s].*y[s] :", a[s].*y[s])
         #println("svm.eval(kernel, X, s), ", svm.eval(kernel, X, s))
         #println("dot(a[s].*y[s], svm.eval(kernel, X, s)) : ", dot.(a[s].*y[s], svm.eval(kernel, X, s)))
+        a_y_tf = (((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))
         if isempty(a[s].*y[s]) || isempty(svm.eval(kernel, X, s))
             println("isempty")
             ydf = y
@@ -65,7 +66,6 @@ function fit(obj::SVC, X, y)
             println("ydf : ", (ydf))
             #println("size ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", size( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
             #println("((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) :", ( ((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)) ))
-            a_y_tf = (((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))
             #println(":", (ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
             #println("min :", minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
             #i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0))]))
@@ -124,12 +124,13 @@ function fit(obj::SVC, X, y)
         println("a[s].*y[s].*(kxi .- kxj) :", a[s].*y[s].*(kxi .- kxj))
         println("sum(a[s].*y[s].*(kxi .- kxj)) :", sum( (a[s].*y[s].*(kxi .- kxj) == []) ? 0 : a[s].*y[s].*(kxi .- kxj) ) )
         ai = (1 - y[i]*y[j] + y[i]*( (kij - kjj)*ay2 - sum( (a[s].*y[s].*(kxi .- kxj) == []) ? 0 : a[s].*y[s].*(kxi .- kxj) ) ) ) / (kii + kjj - 2*kij)
-        println("ai :", ai)
+        println("ai 1:", ai)
         if ai < 0
             ai = 0
         elseif ai > obj.C
             ai = obj.C
         end
+        println("ai 2:", ai)
 
         aj = (-ai*y[i] - ay2)*y[i]
         if aj < 0
@@ -139,7 +140,9 @@ function fit(obj::SVC, X, y)
             aj = obj.C
             ai = (-ai*y[i] - ay2)*y[i]
         end
+        println("ai 3:", ai)
         ay = ay + y[i] * (ai - a[i]) + y[j] * (aj -a[j])
+        println("a[i]:", a[i])
         if ai == a[i]
             break
         end
