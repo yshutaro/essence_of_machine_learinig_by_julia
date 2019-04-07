@@ -41,16 +41,14 @@ function fit(obj::SVC, X, y)
     kernel = RBFKernel(X, obj.σ)
     for i in 1:obj.max_iter
         s = a .!= 0.
-        a_y_tf_i = (((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))
-        a_y_tf_j = (((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0)))
         if isempty(a[s].*y[s]) || isempty(svm.eval(kernel, X, s))
             ydf = y
-            i = findfirst(ydf .== minimum(ydf[a_y_tf_i]))
-            j = findfirst(ydf .== maximum(ydf[a_y_tf_j]))
+            i = findfirst(ydf .== minimum(ydf[(((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))]))
+            j = findfirst(ydf .== maximum(ydf[(((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0)))]))
         else
             ydf = y .* (1 .- (y .* ((a[s].*y[s])' * svm.eval(kernel, X, s))'))
-            i = findfirst(ydf .== minimum(ydf[a_y_tf_i]))
-            j = findfirst(ydf .== maximum(ydf[a_y_tf_j]))
+            i = findfirst(ydf .== minimum(ydf[(((a .> 0) .& (y .> 0)) .| ((a .< obj.C) .& (y .< 0)))]))
+            j = findfirst(ydf .== maximum(ydf[(((a .> 0) .& (y .< 0)) .| ((a .< obj.C) .& (y .> 0)))]))
         end
         if ydf[i] >= ydf[j]
             break
