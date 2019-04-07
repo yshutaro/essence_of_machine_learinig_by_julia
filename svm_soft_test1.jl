@@ -6,7 +6,6 @@ using Random
 
 Random.seed!(0)
 X0 = randn(20, 2)
-println("X0 : ", X0)
 
 #X0 = [ 1.76405235  0.40015721;
 #  0.97873798  2.2408932 ;
@@ -30,7 +29,6 @@ println("X0 : ", X0)
 # -0.38732682 -0.30230275;]
 
 X1 = randn(20, 2) .+ [2.5 3]
-println("X1 : ", X1)
 
 #X1 = [ 1.45144703 1.57998206;
 # 0.79372981 4.9507754 ;
@@ -56,7 +54,6 @@ println("X1 : ", X1)
 y = vcat([1 for x in 1:20], [-1 for x in 1:20])
 
 X = vcat(X0, X1)
-println("X: ", X)
 
 model = svm_soft.SVC()
 svm_soft.fit(model, X, y)
