@@ -6,8 +6,9 @@ mutable struct SVC
     w_
     w0_
     C
+    max_iter::Int
     function SVC(C=1.)
-        new(Nothing, Nothing, Nothing, C)
+        new(Nothing, Nothing, Nothing, C, 10000)
     end
 end
 
@@ -16,7 +17,7 @@ function fit(s::SVC, X, y)
     ay = 0
     ayx = zeros(size(X)[2])
     yx = y .* X
-    while true
+    for i in 1:s.max_iter
         ydf = y .* (1 .- (yx * ayx))
         i = findfirst(ydf .== minimum(ydf[((a .> 0) .& (y .> 0)) .| ((a .< s.C) .& (y .< 0))]))
         j = findfirst(ydf .== maximum(ydf[((a .> 0) .& (y .< 0)) .| ((a .< s.C) .& (y .> 0))]))
