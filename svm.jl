@@ -91,11 +91,7 @@ function fit(obj::SVC, X, y)
     obj.y_ = y
     obj.kernel_ = kernel
     s = a .!= 0.
-    #if isempty(a[s].*y[s]) || isempty(svm.eval(kernel, X, s))
-    #    #obj.w0_ = sum(y[s]) / sum(s)
-    #else
-        obj.w0_ = sum(y[s] - ((a[s].*y[s])' * eval(kernel, X[s, :], s))') / sum(s)
-    #end
+    obj.w0_ = sum(y[s] - ((a[s].*y[s])' * eval(kernel, X[s, :], s))') / sum(s)
 end
 
 function predict(obj::SVC, X)
