@@ -10,7 +10,7 @@ mutable struct SVC
     end
 end
 
-function fit(s::SVC, X, y, selections=Nothing)
+function fit(s::SVC, X, y)
     a = zeros(size(X)[1])
     ay = 0
     ayx = zeros(size(X)[2])
