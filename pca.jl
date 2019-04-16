@@ -20,11 +20,12 @@ function fit(obj::PCA, X)
     xbar = mean(X, dims=1)
     Y = X .- xbar
     S = dot(Y', Y)
+    F = svd(S)
+    obj.VT_ = F.VT_
 end
 
-function transform(obj:PCA, X)
-    # TODO
-    #obj.VT_
+function transform(obj::PCA, X)
+    dot(obj.VT_, X')'
 end
 
 end
