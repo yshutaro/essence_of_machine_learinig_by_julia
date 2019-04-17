@@ -13,6 +13,6 @@ X = Xy[:, end-1]
 model = pca.PCA(2)
 pca.fit(model, X)
 
-Y = pca.transform(X)
-
+Y = pca.transform(model, X)
+println("size Y :", size(Y))
 scatter(Y[:,1], Y[:,2], color=:black)
