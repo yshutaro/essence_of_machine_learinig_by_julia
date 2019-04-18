@@ -8,7 +8,9 @@ row,col=size(dataframe)
 
 Xy = Float64[dataframe[r,c] for r in 1:row, c in 1:col]
 
-X = Xy[:, end-1]
+println("size Xy:", size(Xy))
+
+X = Xy[:, 1:end-1]
 
 model = pca.PCA(2)
 pca.fit(model, X)

@@ -17,16 +17,18 @@ end
 
 function fit(obj::PCA, X)
     #v0 = randn(obj.rng_, min(size(X)))
+    println("size X:", size(X))
     xbar = mean(X, dims=1)
+    println("xbar:", xbar)
     Y = X .- xbar
     S = Y' * Y
     U, Σ, VT = svd(S)
+    println("VT size:",size(VT))
     obj.VT_ = VT
 end
 
 function transform(obj::PCA, X)
     println("size Obj.VT_", size(obj.VT_))
-    println("size X", size(X))
     (obj.VT_ * X')'
 end
 
