@@ -4,7 +4,6 @@ using Random
 using Statistics
 using LinearAlgebra
 using PyCall
-@pyimport scipy.sparse.linalg as linalg
 
 mutable struct PCA
     n_components
@@ -18,13 +17,15 @@ mutable struct PCA
 end
 
 function fit(obj::PCA, X)
-    #v0 = randn(obj.rng_, min(size(X)))
+    v0 = randn(obj.rng_, minimum(size(X)))
     println("size X:", size(X))
+    println("min size X:", minimum(size(X)))
     xbar = mean(X, dims=1)
     println("xbar:", xbar)
     Y = X .- xbar
     S = Y' * Y
-    U, Σ, VT = linalg.svds(S, k=obj.n_components, tol=obj.tol)
+    linalg = pyimport("scipy.sparse.linalg")
+    U, Σ, VT = linalg.svds(S, k=obj.n_components, tol=obj.tol, v0=v0)
     println("U size:",size(U))
     println("VT size:",size(VT))
     println("Σ size:",size(Σ))
