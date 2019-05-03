@@ -2,7 +2,6 @@ module pca
 
 using Random
 using Statistics
-using LinearAlgebra
 using PyCall
 
 mutable struct PCA
